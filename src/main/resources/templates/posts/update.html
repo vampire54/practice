@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+    <!-- header -->
+    <div th:insert="layout/header.html" id="header"></div>
+        <div id="col-md-12">
+            <div class="container col-md-8">
+                <form>
+                    <tr scope="row" th:each=" posts : ${posts}">
+                        <div class="form-group">
+                            <label for="id">번호</label>
+                            <input type="text" class="form-control" id="id" th:value="${posts.id}" readonly>
+                        </div>
+
+                        <div class="from-group">
+                            <label for="title">제목</label>
+                            <input type="text" class="form-control" id="title" th:value="${posts.title}">
+                        </div>
+
+                        <div class="from-group">
+                            <label for="content">내용</label>
+                            <textarea rows="5" class="form-control" id="content" th:text="${posts.content}"></textarea>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="writer">작성자</label>
+                            <input type="text" class="form-control" id="writer" th:value="${posts.writer}" readonly>
+                        </div>
+                    </tr>
+                </form>
+
+                <button type="button" id="btn-update" class="btn btn-primary">완료</button>
+                <a th:href="@{/posts/list}" role="button" class="btn btn-primary">취소</a>
+
+            </div>
+        </div>
+    <!-- footer -->
+    <div th:insert="layout/footer.html" id="footer"></div>
+</body>
+</html>

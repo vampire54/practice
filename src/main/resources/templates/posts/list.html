@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+    <!-- header -->
+    <div th:insert="layout/header.html" id="header"></div>
+
+    <!-- 테이블 -->
+    <table class="table">
+        <thead>
+        <tr>
+            <th scope="col">번호</th>
+            <th scope="col">글제목</th>
+            <th scope="col">작성자</th>
+            <th scope="col">작성일</th>
+            <th scope="col">조회수</th>
+        </tr>
+        </thead>
+
+        <tbody>
+        <tr scope="row" th:each=" posts : ${postsList}">
+            <td>
+                <span th:text="${posts.id}"></span>
+            </td>
+            <td>
+                <a th:href="@{'/posts/read/' + ${posts.id}}">
+                    <span th:text="${posts.title}"></span>
+                </a>
+            </td>
+            <td>
+                <span th:text="${posts.writer}"></span>
+            </td>
+            <td>
+                <span th:text="${#temporals.format(posts.modifiedDate, 'yyyy.MM.dd HH:mm')}"></span>
+            </td>
+
+<!--                               <td>
+                                    <span th:text="${posts.view}"></span>
+                                </td>-->
+        </tr>
+        </tbody>
+    </table>
+
+    <div>
+                <span th:each="pageNum : ${pageList}" th:inline="text">
+                    <a th:href="@{'/?page=' + ${pageNum}}">[[${pageNum}]]</a>
+                </span>
+    </div>
+
+    <!-- 서치 -->
+    <div id="wrap">
+        <form action="/posts/search" method="GET">
+            <div class="search">
+                <input name="keyword" type="text" placeholder="검색어를 입력해주세요">
+            </div>
+
+            <button>검색하기</button>
+        </form>
+        <!-- 글쓰기 -->
+        <a th:href="@{/posts/save}">글쓰기</a>
+    </div>
+
+    <!-- footer -->
+    <div th:insert="layout/footer.html" id="footer"></div>
+</body>
+</html>
