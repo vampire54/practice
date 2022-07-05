@@ -1,10 +1,12 @@
 package com.pj.project.service;
 
-import com.pj.project.web.dto.PostsRequestDto;
-import com.pj.project.web.dto.PostsResponseDto;
-import com.pj.project.domain.posts.Posts;
 import com.pj.project.repository.PostsRepository;
+import com.pj.project.dto.PostsRequestDto;
+import com.pj.project.dto.PostsResponseDto;
+import com.pj.project.domain.posts.Posts;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
@@ -15,12 +17,13 @@ import java.util.stream.Collectors;
 @Service
 public class PostsService {
 
-    private final PostsRepository repository;
+    private final PostsRepository postsRepository;
+
     // 글 작성
     @Transactional
-    public Long save(PostsRequestDto dto){
+    public Long save(PostsRequestDto dto) {
         Posts posts = dto.toEntity();
-        repository.save(posts);
+        postsRepository.save(posts);
 
         return posts.getId();
     }
@@ -32,7 +35,7 @@ public class PostsService {
      */
     @Transactional
     public Long update(Long id, PostsRequestDto dto) {
-        Posts posts = repository.findById(id).orElseThrow(() ->
+        Posts posts = postsRepository.findById(id).orElseThrow(() ->
                 new IllegalArgumentException("해당 게시글이 존재하지 않습니다. id=" + id));
 
         posts.update(dto.getTitle(), dto.getContent());
@@ -43,7 +46,7 @@ public class PostsService {
     //게시판 글 읽기
     @Transactional
     public PostsResponseDto findById(Long id) {
-        Posts posts = repository.findById(id).orElseThrow(() ->
+        Posts posts = postsRepository.findById(id).orElseThrow(() ->
                 new IllegalArgumentException("해당 게시글이 존재하지 않습니다. id: " + id));
 
         return new PostsResponseDto(posts);
@@ -51,17 +54,39 @@ public class PostsService {
 
     //게시판 글 리스트 (데이터 불러오기)
     @Transactional
-    public List<PostsResponseDto> findAllDesc(){
+    public List<PostsResponseDto> findAllDesc() {
 
-        return repository.findAllDesc().stream()
+        return postsRepository.findAllDesc().stream()
                 .map(PostsResponseDto::new)
                 .collect(Collectors.toList());
     }
+
+    //글 삭제
     @Transactional
     public void delete(Long id) {
-        Posts posts = repository.findById(id).orElseThrow(() ->
+        Posts posts = postsRepository.findById(id).orElseThrow(() ->
                 new IllegalArgumentException("해당 게시글이 존재하지 않습니다. id: " + id));
 
-        repository.delete(posts);
+        postsRepository.delete(posts);
+    }
+
+    // view+
+    @Transactional
+    public int updateView(Long id) {
+        return postsRepository.updateView(id);
+    }
+
+    // 페이징
+    @Transactional
+    public Page<Posts> pageList(Pageable pageable) {
+        return postsRepository.findAll(pageable);
+    }
+
+    //검색
+    @Transactional
+    public Page<Posts> search(String keyword,Pageable pageable) {
+        Page<Posts> postsList = postsRepository.findByTitleContaining(keyword, pageable);
+
+        return postsList;
     }
 }

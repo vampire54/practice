@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<!-- header -->
+<div th:insert="layout/header.html" id="header"></div>
+
+<div class="container">
+
+    <div style="margin: auto;">
+        <span class="fs-1" type="text">게시판</span>
+        <span class="badge bg-primary text-wrap" th:text="${session.user.name}">아이디</span> 님 환영합니다!
+    </div>
+
+    <!-- 테이블 -->
+    <table class="table table-striped">
+        <thead>
+        <tr>
+            <th scope="col">번호</th>
+            <th scope="col">글제목</th>
+            <th scope="col">작성자</th>
+            <th scope="col">작성일</th>
+            <th scope="col">조회수</th>
+        </tr>
+        </thead>
+
+        <tbody>
+        <tr scope="row" th:each=" posts : ${searchList}">
+            <td>
+                <span th:text="${posts.id}"></span>
+            </td>
+            <td>
+                <a th:href="@{'/posts/read/' + ${posts.id}}">
+                    <span th:text="${posts.title}"></span>
+                </a>
+            </td>
+            <td>
+                <span th:text="${posts.writer}"></span>
+            </td>
+            <td>
+                <span th:text="${#temporals.format(posts.modifiedDate, 'yyyy.MM.dd HH:mm')}"></span>
+            </td>
+
+            <td>
+                <span th:text="${posts.view}"></span>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+    <!-- 서치 -->
+    <div class="mx-auto mt-4 search-bar input-group mb-3 justify-content-center">
+        <form action="/posts/search" method="GET" class="" role="search" >
+            <input type="text" name="keyword" class="" id="search" placeholder="검색어를 입력하세요">
+        </form>
+    </div>
+    <!-- 글쓰기 -->
+    <div>
+        <a th:href="@{/posts/save}" role="button" class="btn btn-primary" style="float:right;">글쓰기</a>
+    </div>
+    <!-- 페이징 -->
+
+    <nav aria-label="Page navigation example">
+        <ul class="pagination justify-content-center">
+            <li class="page-item">
+                <a class="page-link" th:href="@{/posts/list(page=0)}" aria-label="Previous">
+                    <span aria-hidden="true">&laquo;</span>
+                </a>
+            </li>
+
+            <li class="page-item" th:each="page:${#numbers.sequence(startPage, endPage)}">
+                <a class="page-link" th:if="${page != nowPage}" th:href="@{/posts/list(page=${page -1})}" th:text="${page}"></a>
+                <strong class="page-link" th:if="${page == nowPage}" th:text="${page}" style="color:red"></strong>
+            </li>
+
+            <li class="page-item">
+                <a class="page-link" th:href="@{/posts/list(page=${endPage -1})}" aria-label="Next">
+                    <span aria-hidden="true">&raquo;</span>
+                </a>
+            </li>
+        </ul>
+    </nav>
+
+
+</div>
+
+<!-- footer -->
+<div th:insert="layout/footer.html" id="footer"></div>
+</body>
+</html>

@@ -18,12 +18,12 @@
 
                 <div class="from-group">
                     <label for="title">제목</label>
-                    <input type="text" class="form-control" id="title" th:value="${posts.title}">
+                    <input type="text" class="form-control" id="title" th:value="${posts.title}" readonly>
                 </div>
 
                 <div class="from-group">
                     <label for="content">내용</label>
-                    <textarea rows="5" class="form-control" id="content" th:text="${posts.content}"></textarea>
+                    <textarea rows="5" class="form-control" id="content" th:text="${posts.content}" readonly></textarea>
                 </div>
 
                 <div class="form-group">
@@ -37,6 +37,50 @@
         <a th:href="@{/posts/list}" role="button" class="btn btn-primary">취소</a>
     </div>
 </div>
+<!-- 작성란&버튼 -->
+<div class="container col-md-8">
+    <form>
+        <!-- hidden -->
+        <input type="hidden" id="postsId" th:value="${posts.id}">
+
+
+        <!-- 입력 영역 -->
+        <input type="text" id="comment" name="comment" class="form-control" placeholder="댓글을 입력해주세요..">
+        <button type="button" id="btn-comment-save" class="btn btn-outline-primary"> 등록</button>
+    </form>
+    <!-- 댓글뷰-->
+
+    <div id="commentTable">
+        <div>
+            <span class="fs-3"> 댓글</span>
+        </div>
+        <div th:each="comments:${comments}">
+
+            <div class="container">
+                <div class="row row-cols">
+                    <div class="col">
+                        <span th:text="${session.user.name}" class="form-control"></span>
+                    </div>
+                    <div class="col-7">
+                        <span th:text="${comments.comment}" class="form-control"></span>
+                    </div>
+                    <div class="col-3">
+                        <span th:text="${comments.createdDate}" class="form-control"></span>
+                    </div>
+
+                    <div class="col">
+                        <button th:onclick="|main.commentDelete('${posts.id}', '${comments.id}')|" class="btn btn-outline-primary btn-sm" style="margin-left: 10px;">삭제</button>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+
+
+</div>
+
 <!-- footer -->
 <div th:insert="layout/footer.html" id="footer"></div>
 </body>
